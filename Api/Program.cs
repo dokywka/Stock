@@ -1,8 +1,13 @@
-using StockApp.StockApp.Core.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using StockApp.StockApp.Infrastructure.Repositories;
 using Microsoft.Extensions.Options;
+using StockApp.Api.Controllers;
+using StockApp.Core.Interfaces;
+using StockApp.StockApp.Core.Interfaces;
+using StockApp.StockApp.Core.Models;
 using StockApp.StockApp.Infrastructure;
+using StockApp.StockApp.Infrastructure.Repositories;
+using StockApp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +30,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ITokenService,TokenService>();
+
+builder.Services.AddIdentity<StockUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
 
@@ -38,6 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
