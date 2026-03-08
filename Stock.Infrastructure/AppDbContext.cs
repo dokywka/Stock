@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using StockApp.Core.Models;
 using StockApp.StockApp.Core.Models;
 
 
@@ -9,6 +11,8 @@ namespace StockApp.StockApp.Infrastructure
     {
         public DbSet<StockItem> Stocks { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Portfolio> Portfolios { get; set; }
+
         public AppDbContext()
         {
 
@@ -16,6 +20,27 @@ namespace StockApp.StockApp.Infrastructure
         public AppDbContext(DbContextOptions<AppDbContext> options):
             base (options) { 
         
+            
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Portfolio>(entity=> {
+                entity.HasKey(x=>x.PortfolioId);
+
+                entity.HasOne(x => x.User).WithMany(x => x.Portfolios).HasForeignKey(x=>x.UserId);
+
+                });
+
+            modelBuilder.Entity<Portfolio>(entity =>
+            {
+                entity.HasKey(x => x.PortfolioId);
+
+                entity.HasOne(x => x.Stock).WithMany(x => x.Portfolios).HasForeignKey(x => x.StockId);
+
+            });
+
         }
     }
 }

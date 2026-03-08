@@ -6,7 +6,7 @@ using StockApp.Api.DTOs.Account;
 using StockApp.Core.Interfaces;
 using StockApp.StockApp.Core.Models;
 
-namespace StockApp.Api.Controllers
+namespace StockApp.StockApp.Api.Controllers
 {
     [Route("Api/Account")]
     [ApiController]

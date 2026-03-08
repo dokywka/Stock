@@ -25,6 +25,7 @@ namespace StockApp.Infrastructure
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.GivenName, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
             };
 
             var issuer = _configuration["Jwt:Issuer"];
