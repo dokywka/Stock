@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StockApp.Api.Controllers;
 using StockApp.Api.DTOs.Stock;
+using StockApp.Core.Common;
 using StockApp.Core.Interfaces;
 using StockApp.StockApp.Core.Models;
 
@@ -49,8 +51,10 @@ namespace StockApp.StockApp.Api.Controllers
             int stockId=model.StockId;
             int quantity=model.Quantity;
 
-            decimal? tryBuyTransaction=await _portfolioRepository.BuyTransactionToPortfolioAsync(user,stockId,quantity);
-            if (tryBuyTransaction==null) return BadRequest("Недостаточно средств или акция не найдена");
+
+
+            Result<decimal> tryBuyTransaction=await _portfolioRepository.BuyTransactionToPortfolioAsync(user,stockId,quantity);
+            if (!tryBuyTransaction.IsSuccess) return BadRequest(tryBuyTransaction.Error);
 
             return Ok("Акция успешно куплена");
         }
@@ -64,11 +68,11 @@ namespace StockApp.StockApp.Api.Controllers
             int stockId=model.StockId;
             int amount = model.Quantity;
 
-            decimal? trySellTransaction = await _portfolioRepository.SellTransactionFromPortfolioAsync(user, stockId, amount);
+            Result<decimal> trySellTransaction = await _portfolioRepository.SellTransactionFromPortfolioAsync(user, stockId, amount);
 
-            if (trySellTransaction==null) return BadRequest("Акция не найдена или недостаточное количество");
+            if (!trySellTransaction.IsSuccess) return BadRequest(trySellTransaction.Error);
 
-            return Ok($"Акция успешно продана, выгода {trySellTransaction}");
+            return Ok($"Акция успешно продана, выгода {trySellTransaction.Data}");
         }
     }
 }

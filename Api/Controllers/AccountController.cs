@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using StockApp.Api.Controllers;
 using StockApp.Api.DTOs.Account;
 using StockApp.Core.Interfaces;
 using StockApp.StockApp.Core.Models;
@@ -10,11 +12,11 @@ namespace StockApp.StockApp.Api.Controllers
 {
     [Route("Api/Account")]
     [ApiController]
-    public class AccountController:ControllerBase
+    public class AccountController: BaseController
     {
         private readonly UserManager<StockUser> _userManager;
         private readonly ITokenService _tokenService;
-        public AccountController(UserManager<StockUser> userManager,ITokenService tokenService)
+        public AccountController(UserManager<StockUser> userManager,ITokenService tokenService):base(userManager)
         {
             _userManager = userManager;
             _tokenService = tokenService;
@@ -62,6 +64,21 @@ namespace StockApp.StockApp.Api.Controllers
             }
 
         }
+        [Authorize]
+        [HttpPost("deposit")]
+        public async Task<IActionResult> DepositAsync([FromBody]DepositDto model)
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+                return Unauthorized();
 
+            decimal deposit = model.DepositAmount;
+
+            user.Balance += deposit;
+
+            await _userManager.UpdateAsync(user);
+            return Ok($"Ваш текущий баланс {user.Balance}$");
+
+        }
     }
 }

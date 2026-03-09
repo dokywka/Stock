@@ -3,17 +3,18 @@ using StockApp.StockApp.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using StockApp.Core.Common;
 
 namespace StockApp.Core.Interfaces
 {
     public interface ITransactionsPortfolioRepository
     {
-        Task<decimal?> BuyTransactionToPortfolioAsync(StockUser user, int stockId, int quantity);
-        Task<List<Portfolio>> GetAllPortfolioTransactionsAsync(StockUser user);
-        Task<decimal?> SellTransactionFromPortfolioAsync(StockUser user, int stockId, int amount);
-        Task<Portfolio?> GetByStockIdAsync(int stockId, StockUser user);
+        Task<Result<decimal>> BuyTransactionToPortfolioAsync(StockUser user, int stockId, int quantity);
+        Task<Result<List<Portfolio>>> GetAllPortfolioTransactionsAsync(StockUser user);
+        Task<Result<decimal>> SellTransactionFromPortfolioAsync(StockUser user, int stockId, int amount);
+        Task<Result<Portfolio>> GetByStockIdAsync(int stockId, StockUser user);
 
-        Task<decimal> GetPortfolioValueAsync(StockUser user);
+        Task<Result<decimal>> GetPortfolioValueAsync(StockUser user);
 
     }
 }

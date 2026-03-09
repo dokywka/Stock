@@ -1,12 +1,13 @@
-﻿using StockApp.Core.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using StockApp.Core.Common;
+using StockApp.Core.Interfaces;
+using StockApp.Core.Models;
 using StockApp.StockApp.Core.Models;
 using StockApp.StockApp.Infrastructure;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-
-using Microsoft.EntityFrameworkCore;
-using StockApp.Core.Interfaces;
 
 namespace StockApp.Infrastructure.Repositories
 {
@@ -17,15 +18,15 @@ namespace StockApp.Infrastructure.Repositories
             _appDbContext = appDbContext;
         }
 
-        public async Task<decimal?> BuyTransactionToPortfolioAsync(StockUser user, int stockId, int quantity)
+        public async Task<Result<decimal>> BuyTransactionToPortfolioAsync(StockUser user, int stockId, int quantity)
         {
             StockItem chosenStock = await _appDbContext.Stocks.FirstOrDefaultAsync(x => x.Id == stockId);
 
-            if (chosenStock == null) return null;
+            if (chosenStock == null) return Result<decimal>.Failure("Акция не найдена");
 
             decimal cost = chosenStock.Purchase * quantity;
 
-            if (user.Balance < cost) return null;
+            if (user.Balance < cost) return Result<decimal>.Failure("Недостаточно средств на балансе");
             {
                 user.Balance -= cost;
                 Portfolio transaction = new Portfolio()
@@ -41,23 +42,23 @@ namespace StockApp.Infrastructure.Repositories
                 await _appDbContext.SaveChangesAsync();
             }
 
-            return cost;
+            return Result<decimal>.Success(cost);
         }
-        public async Task<List<Portfolio>> GetAllPortfolioTransactionsAsync(StockUser user)
+        public async Task<Result<List<Portfolio>>> GetAllPortfolioTransactionsAsync(StockUser user)
         {
             List<Portfolio> portfolios=await _appDbContext.Portfolios.Where(x => x.UserId == user.Id).Include(x => x.Stock).ToListAsync();
-            return portfolios;
+            return Result<List<Portfolio>>.Success(portfolios);
         }
-        public async Task<decimal?> SellTransactionFromPortfolioAsync(StockUser user, int stockId, int amount)
+        public async Task<Result<decimal>> SellTransactionFromPortfolioAsync(StockUser user, int stockId, int amount)
         {
             Portfolio portfolio=await _appDbContext.Portfolios.Where(x=>x.UserId==user.Id && x.StockId==stockId).FirstOrDefaultAsync();
 
 
-            if (portfolio==null) return null;
+            if (portfolio==null) return Result<decimal>.Failure("Позиция в портфеле не найдена");
 
             if (amount > portfolio.Quantity) 
             {
-                return null;
+                return Result<decimal>.Failure($"Нельзя продать {amount} акций, у вас только {portfolio.Quantity}");
             }
             else if(amount==portfolio.Quantity)
             {
@@ -74,16 +75,17 @@ namespace StockApp.Infrastructure.Repositories
             _appDbContext.Update(user);
             await _appDbContext.SaveChangesAsync();
 
-            return profit;
-            
+            return Result<decimal>.Success(profit);
+
 
         }
-        public async Task<Portfolio?> GetByStockIdAsync(int stockId,StockUser user)
+        public async Task<Result<Portfolio>> GetByStockIdAsync(int stockId,StockUser user)
         {
             Portfolio? stocks = await _appDbContext.Portfolios.Where(x => x.UserId == user.Id && x.StockId == stockId).FirstOrDefaultAsync();
-            return stocks;
+            if (stocks == null) return Result<Portfolio>.Failure("Позиция не найдена");
+            return Result<Portfolio>.Success(stocks);
         }
-        public async Task<decimal> GetPortfolioValueAsync(StockUser user)
+        public async Task<Result<decimal>> GetPortfolioValueAsync(StockUser user)
         {
             decimal overCost=0;
 
@@ -92,7 +94,7 @@ namespace StockApp.Infrastructure.Repositories
             {
                 overCost += stock.Quantity * stock.PurchasePrice;
             }
-            return overCost;
+            return Result<decimal>.Success(overCost);
         }
 
     }
