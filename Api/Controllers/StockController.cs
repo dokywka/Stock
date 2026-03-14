@@ -9,6 +9,7 @@ using StockApp.StockApp.Api.DTOs.Stock;
 using StockApp.StockApp.Api.Mappers;
 using StockApp.StockApp.Api.Mappers;
 using StockApp.StockApp.Core.Interfaces;
+using StockApp.StockApp.Core.Models;
 using StockApp.StockApp.Core.Queries;
 using System.Timers;
 
@@ -121,6 +122,28 @@ namespace StockApp.StockApp.Api.Controllers
                 return BadRequest(content.Error);
 
             return Ok(content.Data);
+        }
+        [HttpPost]
+        [Route("add/{ticker}")]
+        public async Task<IActionResult> AddStockByTicker([FromRoute] string ticker)
+        {
+            Result<FinnhubCompanyProfile> profile = await _finnhubService.GetCompanyProfileAsync(ticker);
+            if (!profile.IsSuccess) return BadRequest(profile.Error);
+
+            Result<decimal> price = await _finnhubService.GetActualStockCostAsync(ticker);
+            if (!price.IsSuccess) return BadRequest(price.Error);
+
+            StockItem stock = new StockItem
+            {
+                Symbol = ticker,
+                CompanyName = profile.Data.Name,
+                Purchase = price.Data,
+                Industry = profile.Data.FinnhubIndustry,
+                MarketCap = (long)profile.Data.MarketCapitalization
+            };
+
+            await _stockRepo.CreateAsync(stock);
+            return Ok(stock.ToStockDto());
         }
     }
 }

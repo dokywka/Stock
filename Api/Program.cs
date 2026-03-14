@@ -38,6 +38,9 @@ builder.Services.AddScoped<ITokenService,TokenService>();
 builder.Services.AddScoped<ITransactionsPortfolioRepository, TransactionPortfolioRepository>();
 builder.Services.AddHttpClient<IFinnhubService, FinnhubService>();
 
+builder.Services.AddHostedService<StockPriceUpdateBackgroundService>();
+builder.Services.AddScoped<IPriceUpdateProcessingService, PriceUpdateProcessingService>();
+
 builder.Services.AddIdentity<StockUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 

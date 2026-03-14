@@ -55,5 +55,20 @@ namespace StockApp.Infrastructure
 
             return Result<FinhubSearchResult>.Success(item);
         }
+        public async Task<Result<FinnhubCompanyProfile>> GetCompanyProfileAsync(string ticker)
+        {
+            string key = _configuration.GetValue<string>("Finnhub:ApiKey");
+
+            var response = await _httpClient.GetAsync($"https://finnhub.io/api/v1/stock/profile2?symbol={ticker}&token={key}");
+            if (!response.IsSuccessStatusCode)
+                return Result<FinnhubCompanyProfile>.Failure("Finnhub недоступен");
+
+            string json = await response.Content.ReadAsStringAsync();
+            var item = JsonSerializer.Deserialize<FinnhubCompanyProfile>(json);
+
+            if (item == null) return Result<FinnhubCompanyProfile>.Failure("Не удалось десириализовать json файл");
+
+            return Result<FinnhubCompanyProfile>.Success(item);
+        }
     }
 }

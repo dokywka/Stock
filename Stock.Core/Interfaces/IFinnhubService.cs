@@ -10,5 +10,6 @@ namespace StockApp.Core.Interfaces
     {
         Task<Result<decimal>> GetActualStockCostAsync(string ticker);
         Task<Result<FinhubSearchResult>> SearchForStockByTicker(string query);
+        Task<Result<FinnhubCompanyProfile>> GetCompanyProfileAsync(string ticker);
     }
 }
