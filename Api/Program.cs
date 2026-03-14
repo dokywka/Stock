@@ -36,6 +36,7 @@ builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ITokenService,TokenService>();
 builder.Services.AddScoped<ITransactionsPortfolioRepository, TransactionPortfolioRepository>();
+builder.Services.AddHttpClient<IFinnhubService, FinnhubService>();
 
 builder.Services.AddIdentity<StockUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();

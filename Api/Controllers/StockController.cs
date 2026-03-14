@@ -1,10 +1,16 @@
-﻿using StockApp.StockApp.Api.Mappers;
-using Microsoft.AspNetCore.Mvc;
-using StockApp.StockApp.Api.DTOs.Stock;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StockApp.StockApp.Core.Interfaces;
+using StockApp.Api.DTOs.Stock;
+using StockApp.Core.Common;
+using StockApp.Core.Interfaces;
+using StockApp.Core.Models;
+using StockApp.Infrastructure;
+using StockApp.StockApp.Api.DTOs.Stock;
 using StockApp.StockApp.Api.Mappers;
+using StockApp.StockApp.Api.Mappers;
+using StockApp.StockApp.Core.Interfaces;
 using StockApp.StockApp.Core.Queries;
+using System.Timers;
 
 namespace StockApp.StockApp.Api.Controllers
 {
@@ -12,10 +18,12 @@ namespace StockApp.StockApp.Api.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        private readonly IStockRepository stockRepo;
-        public StockController(IStockRepository _stockRepo)
+        private readonly IStockRepository _stockRepo;
+        private readonly IFinnhubService _finnhubService;
+        public StockController(IStockRepository stockRepo, IFinnhubService finnhubService)
         {
-            stockRepo = _stockRepo;
+            _stockRepo = stockRepo;
+            _finnhubService = finnhubService;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject  query)//fromquery возможность добавлять query параметры .../stocks=Tesla для фильтрации или поиска 
@@ -25,7 +33,7 @@ namespace StockApp.StockApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var stocks = await stockRepo.GetAllAsync(query);
+            var stocks = await _stockRepo.GetAllAsync(query);
              
             var stocksDto=stocks.Select(s => s.ToStockDto());
 
@@ -39,7 +47,7 @@ namespace StockApp.StockApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var stock = await stockRepo.GetByIdAsync(id);
+            var stock = await _stockRepo.GetByIdAsync(id);
             if (stock == null)
             {
                 return NotFound();
@@ -59,7 +67,7 @@ namespace StockApp.StockApp.Api.Controllers
             }
 
             var stockModel = stockDto.ToStockFromCreateDto();
-            await stockRepo.CreateAsync(stockModel);
+            await _stockRepo.CreateAsync(stockModel);
             return CreatedAtAction(nameof(GetStockById), new { id = stockModel.Id }, stockModel.ToStockDto());
         }
         [HttpPut]
@@ -70,7 +78,7 @@ namespace StockApp.StockApp.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var stockModel = await stockRepo.UpdateAsync(id, updateDto.ToStockFromUpdateDto());
+            var stockModel = await _stockRepo.UpdateAsync(id, updateDto.ToStockFromUpdateDto());
             if (stockModel == null)
             {
                 return NotFound();
@@ -86,13 +94,33 @@ namespace StockApp.StockApp.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var stockModel= await stockRepo.DeleteAsync(id);
+            var stockModel= await _stockRepo.DeleteAsync(id);
             if (stockModel == null)
             {
                 return NotFound();
             }
             return NoContent();
         }
+        [HttpGet]
+        [Route("price/{ticker}")]
+        public async Task<IActionResult> GetCurrentStockCostAsync(string ticker)
+        {
+            Result<decimal> cost =await _finnhubService.GetActualStockCostAsync(ticker);
+            if (!cost.IsSuccess) 
+                return BadRequest(cost.Error);
 
+            return Ok(cost.Data);
+        }
+        [HttpGet]
+        [Route("search")]
+        public async Task<IActionResult> SearchStockBySymbolOrDescription([FromQuery]string query)
+        {
+            Result<FinhubSearchResult> content=await _finnhubService.SearchForStockByTicker(query);
+
+            if(!content.IsSuccess)
+                return BadRequest(content.Error);
+
+            return Ok(content.Data);
+        }
     }
 }
