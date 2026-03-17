@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockApp.Core", "Stock.Core
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockApp.Infrastructure", "Stock.Infrastructure\StockApp.Infrastructure.csproj", "{6ACB6058-1B4C-4888-A31D-FA82E9DEC253}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiStockAdvisor", "AiStockAdvisor\AiStockAdvisor.csproj", "{B2E13F8B-9781-4921-ADDB-07A5126F90CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6ACB6058-1B4C-4888-A31D-FA82E9DEC253}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6ACB6058-1B4C-4888-A31D-FA82E9DEC253}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6ACB6058-1B4C-4888-A31D-FA82E9DEC253}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E13F8B-9781-4921-ADDB-07A5126F90CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E13F8B-9781-4921-ADDB-07A5126F90CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E13F8B-9781-4921-ADDB-07A5126F90CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E13F8B-9781-4921-ADDB-07A5126F90CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

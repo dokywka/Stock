@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AiStockAdvisor\AiStockAdvisor.csproj" />
     <ProjectReference Include="..\Stock.Core\StockApp.Core.csproj" />
   </ItemGroup>
 

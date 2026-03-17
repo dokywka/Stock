@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using StockApp.Core.Models;
 using StockApp.StockApp.Core.Models;
+using StockApp.AiStockAdvisor.Models;
 
 
 namespace StockApp.StockApp.Infrastructure
@@ -12,6 +13,7 @@ namespace StockApp.StockApp.Infrastructure
         public DbSet<StockItem> Stocks { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<AiRecommendation> AiRecommendations { get; set; }
 
         public AppDbContext()
         {

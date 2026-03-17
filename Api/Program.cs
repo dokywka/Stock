@@ -13,6 +13,8 @@ using StockApp.StockApp.Core.Models;
 using StockApp.StockApp.Infrastructure;
 using StockApp.StockApp.Infrastructure.Repositories;
 using System.Text;
+using AiStockAdvisor;
+using AiStockAdvisor.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +45,19 @@ builder.Services.AddScoped<IPriceUpdateProcessingService, PriceUpdateProcessingS
 
 builder.Services.AddIdentity<StockUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddScoped<IAiRecommendationRepository, AiRecommendationRepository>();
+
+builder.Services.AddHttpClient<IYandexService, YandexService>((sp, client) =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var apiKey = config["YandexGPT:ApiKey"];
+    var folderId = config["YandexGPT:FolderId"];
+
+    client.BaseAddress = new Uri("https://llm.api.cloud.yandex.net/");
+    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+    client.DefaultRequestHeaders.Add("x-folder-id", folderId);
+});
 
 builder.Services.AddAuthentication(options =>
 {
