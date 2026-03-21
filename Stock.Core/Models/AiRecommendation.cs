@@ -1,7 +1,8 @@
-﻿using System;
+﻿using StockApp.StockApp.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using StockApp.StockApp.Core.Models;
+using System.Text.Json.Serialization;
 
 namespace StockApp.Core.Models
 {
@@ -17,8 +18,11 @@ namespace StockApp.Core.Models
         public string Symbol { get; set; } = string.Empty;
 
         // Результат от нейросети
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public ActionType ActionOn { get; set; } // Buy/Sell/Hold
+        [JsonPropertyName("explanation")]
         public string Explanation { get; set; } = string.Empty;
+        [JsonPropertyName("confidence")]
         public int Confidence { get; set; } // 0-100
 
         // Метаданные

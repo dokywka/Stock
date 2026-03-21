@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using StockApp.Core.Models;
 using StockApp.StockApp.Core.Models;
-using AiStockAdvisor.Models;
+using StockApp.Core.Models;
 
 
 namespace StockApp.StockApp.Infrastructure

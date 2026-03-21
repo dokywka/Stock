@@ -13,8 +13,7 @@ using StockApp.StockApp.Core.Models;
 using StockApp.StockApp.Infrastructure;
 using StockApp.StockApp.Infrastructure.Repositories;
 using System.Text;
-using AiStockAdvisor;
-using AiStockAdvisor.Interfaces;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +27,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
+});
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
 });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

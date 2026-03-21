@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace StockApp.Infrastructure
 {
@@ -44,7 +45,7 @@ namespace StockApp.Infrastructure
 
                 var requestBody = new ModelRecommendation
                 {
-                    Model = "mistralai/mistral-7b-instruct",
+                    Model = "stepfun/step-3.5-flash:free",
                     RecommendationsList = new List<MessageRecommendation> { new MessageRecommendation { UserRole = "user", Content = prompt } }
                 };
 
@@ -54,14 +55,26 @@ namespace StockApp.Infrastructure
                 var response = await _httpClient.PostAsync("https://openrouter.ai/api/v1/chat/completions", content);
 
                 if (!response.IsSuccessStatusCode)
-                    return Result<AiRecommendation>.Failure("Не удалось отправить запрос.");
+                {
+                    string errorBody = await response.Content.ReadAsStringAsync();
+                    return Result<AiRecommendation>.Failure($"OpenRouter error: {errorBody}");
+                }
 
                 string gptResponse= await response.Content.ReadAsStringAsync();
                 var quote = JsonSerializer.Deserialize<OpenRouterResponse>(gptResponse);
 
                 string gptContent = quote.Choices[0].Message.Content;
 
-                var toRecommendation = JsonSerializer.Deserialize<AiRecommendation>(gptContent);
+                gptContent = gptContent.Trim();
+                if (gptContent.StartsWith("```"))
+                {
+                    gptContent = gptContent.Replace("```json", "").Replace("```", "").Trim();
+                }
+
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new JsonStringEnumConverter());
+                var toRecommendation = JsonSerializer.Deserialize<AiRecommendation>(gptContent, options);
+
                 toRecommendation.StockItemId = stock.Id;
                 toRecommendation.Symbol=stock.Symbol;
                 toRecommendation.CreatedAt = DateTime.Now;
