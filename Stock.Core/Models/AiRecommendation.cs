@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using StockApp.StockApp.Core.Models;
 
-namespace AiStockAdvisor.Models
+namespace StockApp.Core.Models
 {
     public class AiRecommendation
     {
@@ -17,7 +17,7 @@ namespace AiStockAdvisor.Models
         public string Symbol { get; set; } = string.Empty;
 
         // Результат от нейросети
-        public Action ActionOn { get; set; } // Buy/Sell/Hold
+        public ActionType ActionOn { get; set; } // Buy/Sell/Hold
         public string Explanation { get; set; } = string.Empty;
         public int Confidence { get; set; } // 0-100
 

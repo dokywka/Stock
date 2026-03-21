@@ -8,6 +8,6 @@ namespace AiStockAdvisor.Interfaces
 {
     public class IYandexService
     {
-        Task<AiRecommendation> GetRecommendationAsync(StockItem stock);
+        //Task<AiRecommendation> GetRecommendationAsync(StockItem stock);
     }
 }

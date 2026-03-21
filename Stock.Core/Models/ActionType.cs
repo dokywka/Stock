@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AiStockAdvisor.Models
+namespace StockApp.Core.Models
 {
-    public enum Action
+    public enum ActionType
     {
         StrongBuy,
         Buy,

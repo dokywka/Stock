@@ -20,9 +20,9 @@ namespace AiStockAdvisor
             _httpClient = httpClient;
             _logger=logger;
         }
-        public Task<AiRecommendation> GetRecommendationAsync(StockItem stock)
-        {
+        //public Task<AiRecommendation> GetRecommendationAsync(StockItem stock)
+        //{
 
-        }
+        //}
     }
 }
