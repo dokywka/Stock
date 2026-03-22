@@ -48,6 +48,8 @@ builder.Services.AddHttpClient<IFinnhubService, FinnhubService>();
 
 builder.Services.AddHostedService<StockPriceUpdateBackgroundService>();
 builder.Services.AddScoped<IPriceUpdateProcessingService, PriceUpdateProcessingService>();
+builder.Services.AddScoped<ICacheService, CacheService>();
+
 
 builder.Services.AddIdentity<StockUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
@@ -74,6 +76,11 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
+});
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
 });
 
 var app = builder.Build();

@@ -34,9 +34,9 @@ namespace StockApp.Infrastructure
 
             if (recommendation == null)
             {
-                string prompt = "Ты финансовый аналитик. " +
-                    "Проанализируй акцию и ответь ТОЛЬКО в JSON формате без лишнего текста:\r\n{\"action\": \"Buy/Sell/Hold\", " +
-                    "\"explanation\": \"краткое объяснение\", \"confidence\": 75}\r\n\r\n" +
+                string prompt = "Проанализируй акцию и ответь ТОЛЬКО в JSON формате без лишнего текста:\r\n" +
+                    "{\"action\": \"StrongBuy/Buy/Hold/Sell/StrongSell\", " +
+                    "\"explanation\": \"краткое объяснение\", \"confidence\": 75}\r\n\r\n"+
                     "Данные акции:\r\n" +
                     $"Тикер: {stock.Symbol}\r\n" +
                     $"Цена: {stock.Purchase}\r\n" +
