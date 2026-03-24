@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StockApp.Api.DTOs.Stock;
 using StockApp.Core.Common;
 using StockApp.Core.Interfaces;
 using StockApp.Core.Models;
+using StockApp.Core.Queries;
 using StockApp.Infrastructure;
+using StockApp.Infrastructure.Handlers;
 using StockApp.StockApp.Api.DTOs.Stock;
 using StockApp.StockApp.Api.Mappers;
 using StockApp.StockApp.Api.Mappers;
@@ -21,9 +25,11 @@ namespace StockApp.StockApp.Api.Controllers
     {
         private readonly IStockRepository _stockRepo;
         private readonly IFinnhubService _finnhubService;
-        public StockController(IStockRepository stockRepo, IFinnhubService finnhubService)
+        private readonly IMediator _mediator;
+        public StockController(IStockRepository stockRepo, IFinnhubService finnhubService, IMediator mediator)
         {
             _stockRepo = stockRepo;
+            _mediator=mediator;
             _finnhubService = finnhubService;
         }
         [HttpGet]
@@ -34,9 +40,10 @@ namespace StockApp.StockApp.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var stocks = await _stockRepo.GetAllAsync(query);
-             
-            var stocksDto=stocks.Select(s => s.ToStockDto());
+            var result = await _mediator.Send(new GetAllStocksQuery{ Query=query});
+
+            if (!result.IsSuccess) return BadRequest(result.Error);
+            var stocksDto = result.Data.Select(s => s.ToStockDto());
 
             return Ok(stocksDto);
         }

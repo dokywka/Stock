@@ -7,6 +7,7 @@ using Microsoft.OpenApi;
 using StockApp.Api.Controllers;
 using StockApp.Core.Interfaces;
 using StockApp.Infrastructure;
+using StockApp.Infrastructure.Handlers;
 using StockApp.Infrastructure.Repositories;
 using StockApp.StockApp.Core.Interfaces;
 using StockApp.StockApp.Core.Models;
@@ -82,6 +83,8 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = "localhost:6379";
 });
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllStocksHandler).Assembly));
 
 var app = builder.Build();
 
