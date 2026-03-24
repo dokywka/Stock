@@ -16,6 +16,7 @@ using StockApp.StockApp.Infrastructure.Repositories;
 using System.Text;
 using System.Text.Json.Serialization;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -44,12 +45,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ITokenService,TokenService>();
-builder.Services.AddScoped<ITransactionsPortfolioRepository, TransactionPortfolioRepository>();
+builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 builder.Services.AddHttpClient<IFinnhubService, FinnhubService>();
 
 builder.Services.AddHostedService<StockPriceUpdateBackgroundService>();
 builder.Services.AddScoped<IPriceUpdateProcessingService, PriceUpdateProcessingService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddScoped<ITradingService, TradingService>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 
 builder.Services.AddIdentity<StockUser, IdentityRole>()

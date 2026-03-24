@@ -11,10 +11,10 @@ using System.Text;
 
 namespace StockApp.Infrastructure.Repositories
 {
-    public class TransactionPortfolioRepository: ITransactionsPortfolioRepository
+    public class PortfolioRepository: IPortfolioRepository
     {
         private readonly AppDbContext _appDbContext;
-        public TransactionPortfolioRepository(AppDbContext appDbContext) {
+        public PortfolioRepository(AppDbContext appDbContext) {
             _appDbContext = appDbContext;
         }
 

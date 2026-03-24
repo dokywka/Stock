@@ -13,6 +13,7 @@ namespace StockApp.StockApp.Infrastructure
         public DbSet<StockItem> Stocks { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<StockTransaction> Transactions {  get; set; }
         public DbSet<AiRecommendation> AiRecommendations { get; set; }
 
         public AppDbContext()
@@ -41,6 +42,13 @@ namespace StockApp.StockApp.Infrastructure
 
                 entity.HasOne(x => x.Stock).WithMany(x => x.Portfolios).HasForeignKey(x => x.StockId);
 
+            });
+
+            modelBuilder.Entity<StockTransaction>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.HasOne(x => x.User).WithMany(x => x.Transactions).HasForeignKey(x => x.UserId);
             });
 
         }

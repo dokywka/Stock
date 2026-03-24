@@ -10,5 +10,6 @@ namespace StockApp.StockApp.Core.Models
     {
         public decimal Balance {  get; set; }
         public List<Portfolio> Portfolios { get; set; } = new List<Portfolio>();
+        public List<StockTransaction> Transactions { get; set; } = new List<StockTransaction>();
     }
 }
