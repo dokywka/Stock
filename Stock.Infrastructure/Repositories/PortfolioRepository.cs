@@ -34,7 +34,7 @@ namespace StockApp.Infrastructure.Repositories
                     UserId = user.Id,
                     StockId = stockId,
                     Quantity = quantity,
-                    PurchasePrice = cost,
+                    PurchasePrice = chosenStock.Purchase,
                     PurchaseDate = DateTime.Now,
                 };
                 _appDbContext.Add(transaction);
@@ -53,6 +53,8 @@ namespace StockApp.Infrastructure.Repositories
         {
             Portfolio portfolio=await _appDbContext.Portfolios.Where(x=>x.UserId==user.Id && x.StockId==stockId).FirstOrDefaultAsync();
 
+            StockItem stock = await _appDbContext.Stocks.FirstOrDefaultAsync(x => x.Id == stockId);
+            if (stock == null) return Result<decimal>.Failure("Акция не найдена");
 
             if (portfolio==null) return Result<decimal>.Failure("Позиция в портфеле не найдена");
 
@@ -69,13 +71,16 @@ namespace StockApp.Infrastructure.Repositories
                 _appDbContext.Update(portfolio);
             }
 
-            decimal profit = portfolio.PurchasePrice * amount;
-            user.Balance += profit;
+            decimal currentPrice = stock.Purchase; // обновляется фоновым сервисом
+            decimal totalReturn = currentPrice * amount; // сколько получаем за продажу
+            decimal profitLoss = (currentPrice - portfolio.PurchasePrice) * amount; // прибыль/убыток
+
+            user.Balance += totalReturn;
 
             _appDbContext.Update(user);
             await _appDbContext.SaveChangesAsync();
 
-            return Result<decimal>.Success(profit);
+            return Result<decimal>.Success(profitLoss);
 
 
         }

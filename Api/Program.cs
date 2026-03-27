@@ -15,9 +15,21 @@ using StockApp.StockApp.Infrastructure;
 using StockApp.StockApp.Infrastructure.Repositories;
 using System.Text;
 using System.Text.Json.Serialization;
-
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Host.UseSerilog((ctx, config) =>
+{
+    config
+        .MinimumLevel.Warning() // сначала уровень
+        .WriteTo.Console()
+        .WriteTo.MongoDB(
+            "mongodb://localhost:27017/StockAppLogs",
+            collectionName: "logs"
+        );
+});
 
 // Add services to the container.
 
@@ -53,6 +65,7 @@ builder.Services.AddScoped<IPriceUpdateProcessingService, PriceUpdateProcessingS
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<ITradingService, TradingService>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ILogService, LogService>();
 
 
 builder.Services.AddIdentity<StockUser, IdentityRole>()
