@@ -5,15 +5,18 @@ using System.Text;
 using MongoDB;
 using MongoDB.Driver;
 using StockApp.Core.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace StockApp.Infrastructure
 {
     public class LogService:ILogService
     {
         private readonly IMongoCollection<LogEntry> _logs;
-        public LogService()
+        private readonly IConfiguration _configuration;
+        public LogService(IConfiguration configuration)
         {
-            var client = new MongoClient("mongodb://localhost:27017");
+            var connectionString = configuration.GetValue<string>("MongoDB:ConnectionString");
+            var client = new MongoClient(connectionString);
             var db = client.GetDatabase("StockAppLogs");
             _logs = db.GetCollection<LogEntry>("logs");
         }
