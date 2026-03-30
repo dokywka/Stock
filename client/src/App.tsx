@@ -1,12 +1,17 @@
-import React from "react";
-import { BrowserRouter ,Routes,Route} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "./Pages/LoginPage";
+import PortfolioPage from "./Pages/PortfolioPage";
 import StocksPage from "./Pages/StocksPage";
+import RegisterPage from "./Pages/RegisterPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<StocksPage />} />
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/stocks" element={<StocksPage />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </BrowserRouter>
   );
