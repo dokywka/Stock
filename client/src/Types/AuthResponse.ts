@@ -1,3 +1,1 @@
-export interface AuthResponse{
-    token:string
-};
+export type AuthResponse = string;

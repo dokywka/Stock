@@ -2,6 +2,7 @@ import axios from "axios";
 import { Login } from "../Types/Login";
 import { AuthResponse } from "../Types/AuthResponse";
 import { Register } from "../Types/Register";
+import { Portfolio } from "../Types/Portfolio";
 
 const api = axios.create({
     baseURL: "https://localhost:7292",
@@ -24,12 +25,16 @@ export const login = async (data: Login) => {
 };
 
 export const getPortfolio = async () => {
-    const response = await api.get("/Api/Portfolio");
+    const response = await api.get("/Api/Portfolio/stocks");
     return response.data;
 };
 
 export const register = async (data: Register) => {
     const response = await api.post("/Api/Account/register", data);
-    return response.data;
+    return response.data.data;
+};
+export const getPortfolioValue=async ()=>{
+    const response=await api.get("/Api/Portfolio/value");
+    return response.data.data;
 };
 export default api;

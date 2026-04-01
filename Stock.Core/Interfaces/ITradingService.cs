@@ -14,5 +14,6 @@ namespace StockApp.Core.Interfaces
         Task<Result<List<StockTransaction>>> GetTransactionsAsync(string userId);
         Task<Result<StockTransaction>> AddTransactionToProfileAsync(StockTransaction transaction);
         Task<Result<decimal>> GetPortfolioValueAsync(StockUser user);
+        Task<Result<List<Portfolio>>> GetProfileBoughtStocks(StockUser user);
     }
 }

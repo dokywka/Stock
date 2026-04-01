@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StockApp.Api.Controllers;
+using StockApp.Api.DTOs.Portfolio;
 using StockApp.Api.DTOs.Stock;
 using StockApp.Api.DTOs.Transactions;
 using StockApp.Core.Common;
@@ -97,6 +98,18 @@ namespace StockApp.StockApp.Api.Controllers
             });
 
             return Ok(transactionsDto);
+        }
+        [HttpGet("stocks")]
+        public async Task<IActionResult> GetStocksAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+                return Unauthorized();
+
+            var result = await _tradingService.GetProfileBoughtStocks(user);
+            if (!result.IsSuccess) return BadRequest(result.Error);
+
+            return Ok(result.Data);
         }
     }
 }

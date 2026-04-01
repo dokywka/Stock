@@ -7,6 +7,7 @@ using StockApp.StockApp.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ZstdSharp.Unsafe;
 
 namespace StockApp.Infrastructure
 {
@@ -92,6 +93,14 @@ namespace StockApp.Infrastructure
 
             return Result<decimal>.Success(result.Data);
 
+        }
+        public async Task<Result<List<Portfolio>>> GetProfileBoughtStocks(StockUser user)
+        {
+            var result = await _portfolioRepository.GetProfileBoughtStocks(user);
+            if (!result.IsSuccess)
+                return Result<List<Portfolio>>.Failure(result.Error);
+
+            return Result<List<Portfolio>>.Success(result.Data);
         }
 
     }

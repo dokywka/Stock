@@ -101,6 +101,14 @@ namespace StockApp.Infrastructure.Repositories
             }
             return Result<decimal>.Success(overCost);
         }
+        public async Task<Result<List<Portfolio>>> GetProfileBoughtStocks(StockUser user)
+        {
+            var portfolios = await _appDbContext.Portfolios
+                    .Where(x => x.UserId == user.Id)
+                    .Include(x => x.Stock)
+                    .ToListAsync();
+            return Result<List<Portfolio>>.Success(portfolios);
+        }
 
     }
 }

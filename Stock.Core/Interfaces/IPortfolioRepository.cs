@@ -14,6 +14,7 @@ namespace StockApp.Core.Interfaces
         Task<Result<decimal>> SellTransactionFromPortfolioAsync(StockUser user, int stockId, int amount);
         Task<Result<Portfolio>> GetByStockIdAsync(int stockId, StockUser user);
         Task<Result<decimal>> GetPortfolioValueAsync(StockUser user);
+        Task<Result<List<Portfolio>>> GetProfileBoughtStocks(StockUser user);
 
     }
 }
